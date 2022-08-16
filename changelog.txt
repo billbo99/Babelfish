@@ -1,0 +1,6 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 2022.08.16
+  Changes:
+    - First release
+    - Coverts all requested locales into one language so that I can use them with some of my mods.  After translations have been completed a custom event gets triggered that my other mods can then use a remote interface to download the translated locales.

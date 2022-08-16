@@ -1,0 +1,11 @@
+{
+    "name": "Babelfish",
+    "version": "1.1.0",
+    "title": "Babelfish",
+    "factorio_version": "1.1",
+    "author": "billbo99",
+    "description": "Babelfish,  translates prototype locales into a language dictionary then raise an event when completed so ",
+    "dependencies": [
+        "base >= 1.1.0"
+    ]
+}
