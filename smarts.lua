@@ -162,9 +162,11 @@ function Smarts.on_player_left(evt)
     local player = game.get_player(evt.player_index)
     if player then
         if global.translators[player.name] then
-            for _, job in pairs(global.translators[player.name].jobs) do
-                if job.index and global.queue[job.index] then
-                    global.queue[job.index].translation = nil
+            if global.translators[player.name].jobs then
+                for _, job in pairs(global.translators[player.name].jobs) do
+                    if job.index and global.queue[job.index] then
+                        global.queue[job.index].translation = nil
+                    end
                 end
             end
         end
