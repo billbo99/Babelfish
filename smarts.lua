@@ -143,9 +143,10 @@ end
 function Smarts.on_load()
 end
 
+---@param evt ConfigurationChangedData
 function Smarts.on_configuration_changed(evt)
     Smarts.init_globals()
-    if table_size(global.translations) == 0 then Smarts.reset_translations() end
+    Smarts.reset_translations()
 end
 
 ---@param evt on_player_created|on_player_joined_game
