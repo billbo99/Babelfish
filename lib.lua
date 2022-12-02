@@ -34,4 +34,17 @@ lib.splitString = function(s, regex)
     return chunks
 end
 
+---Checks a list for a member of a list
+---@param table table
+---@param element string
+---@return boolean
+function lib.contains(table, element)
+    for _, value in pairs(table) do
+        if value == element then
+            return true
+        end
+    end
+    return false
+end
+
 return lib

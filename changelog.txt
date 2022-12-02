@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.3
+Date: 2022.12.02
+  Bugfixes:
+    - Added a blacklist feature and added "dummy-steel-axe" as one of the entries.  this item does not have a locale to translate.    I think this was caused by 1.1.73,  I am reading it might be fixed in the near future.
+---------------------------------------------------------------------------------------------------
 Version: 1.1.2
 Date: 2022.09.25
   Bugfixes:

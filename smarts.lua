@@ -4,6 +4,9 @@ local Smarts = {}
 
 Smarts.field_seperator = "█"
 Smarts.row_seperator = "¶"
+Smarts.exclude = {
+    "dummy-steel-axe"
+}
 
 Smarts.on_translations_complete_event = script.generate_event_name()
 
@@ -21,8 +24,12 @@ local function make_queue()
 
     for _, typ in pairs(types) do
         for _, prototype in pairs(game[typ .. "_prototypes"]) do
-            local key = typ .. "@" .. prototype.name
-            queue[key] = { type = typ, prototype = prototype }
+            if Lib.contains(Smarts.exclude, prototype.name) then
+                -- skipping
+            else
+                local key = typ .. "@" .. prototype.name
+                queue[key] = { type = typ, prototype = prototype }
+            end
         end
     end
     global.max_translations = table_size(queue)
@@ -35,6 +42,9 @@ local function get_job(player_name)
             j.translator = player_name
             return i, j
         end
+        -- if j.translator == player_name then
+        --     return i, j
+        -- end
     end
     return nil, nil
 end
@@ -84,35 +94,43 @@ end
 
 ---@param evt EventData.on_string_translated
 function Smarts.on_string_translated(evt)
-    if not evt.translated then return end
     local player = game.get_player(evt.player_index)
     if not player then return end
 
-    if Lib.starts_with(evt.result, "Babelfish_player_language") then
-        local parts = Lib.splitString(evt.result, "([^" .. Smarts.field_seperator .. "]+)")
-        global.translators[player.name].language = parts[2]
-        if global.translators[player.name].language == settings.global["babelfish-language"].value then
-            player.print("Babelfish: Your language matches the map's default so we will request translation from you")
-        end
-        give_translation_work(player)
-    elseif player and Lib.starts_with(evt.result, "Babelfish") then
-        local rows = Lib.splitString(evt.result, "(.-)" .. Smarts.row_seperator)
-        for _, row in pairs(rows) do
-            if (not Lib.starts_with(row, "Babelfish")) then
-                local parts = Lib.splitString(row, "([^" .. Smarts.field_seperator .. "]+)")
-                local typ = Lib.splitString(parts[1], "([^@]+)")[1]
-                local index = parts[1]
-                local translation = parts[2]
-                local name = global.queue[index].prototype.name
-                if typ and name and index then
-                    global.translations[typ] = global.translations[typ] or {}
-                    global.translations[typ][name] = translation
-                    global.queue[index] = nil
-                    global.translators[player.name].busy = false
+    if evt.translated then
+        if Lib.starts_with(evt.result, "Babelfish_player_language") then
+            local parts = Lib.splitString(evt.result, "([^" .. Smarts.field_seperator .. "]+)")
+            global.translators[player.name].language = parts[2]
+            if global.translators[player.name].language == settings.global["babelfish-language"].value then
+                player.print("Babelfish: Your language matches the map's default so we will request translation from you")
+            end
+            give_translation_work(player)
+        elseif Lib.starts_with(evt.result, "Babelfish") then
+            local rows = Lib.splitString(evt.result, "(.-)" .. Smarts.row_seperator)
+            for _, row in pairs(rows) do
+                if (not Lib.starts_with(row, "Babelfish")) then
+                    local parts = Lib.splitString(row, "([^" .. Smarts.field_seperator .. "]+)")
+                    local typ = Lib.splitString(parts[1], "([^@]+)")[1]
+                    local index = parts[1]
+                    local translation = parts[2]
+                    local name = global.queue[index].prototype.name
+                    if typ and name and index then
+                        log(index)
+                        global.translations[typ] = global.translations[typ] or {}
+                        global.translations[typ][name] = translation
+                        global.queue[index] = nil
+                        global.translators[player.name].busy = false
+                    end
                 end
             end
+            give_translation_work(player)
         end
-        give_translation_work(player)
+    else
+        -- if evt.localised_string[2] == "Babelfish" then
+        --     for _, job in pairs(global.translators[player.name].jobs) do
+        --         print(_)
+        --     end
+        -- end
     end
 end
 
